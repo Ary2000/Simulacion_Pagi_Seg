@@ -30,4 +30,5 @@ proceso crearProceso(){
         dato->info = espacios
     }
     dato->tiempoEjecucion = rand() % (20) + 1;
+    return dato;
 }
