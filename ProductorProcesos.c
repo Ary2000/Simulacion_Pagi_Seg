@@ -9,11 +9,11 @@ typedef struct{
 
 }proceso;
 
-bool paginacion = true;
+bool paginas = true;
 
 proceso crearProceso(){
     proceso dato = malloc(sizeof(proceso));
-    int elementos;
+    /*int elementos;
     if(paginacion){
         elementos = rand() % (10) + 1;
         int espacios[] = {1};
@@ -29,6 +29,6 @@ proceso crearProceso(){
         dato->cantElementos = elementos;
         dato->info = espacios
     }
-    dato->tiempoEjecucion = rand() % (20) + 1;
+    dato->tiempoEjecucion = rand() % (20) + 1;*/
     return dato;
 }
