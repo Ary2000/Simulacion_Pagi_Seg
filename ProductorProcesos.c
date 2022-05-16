@@ -55,5 +55,6 @@ int main(){
         printf(", %i", p->registroBase[i]);
     }
     printf("\n");
+    free(p);
     return 0;
 }
