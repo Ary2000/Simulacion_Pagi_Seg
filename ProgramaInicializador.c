@@ -55,12 +55,18 @@ int main(){
     // Pide el bloque de memoria compartida
     int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
     if(bloque == IPC_RESULT_ERROR){
+        printf("%s\n", "ERROR");
         return IPC_RESULT_ERROR;
     }
     // Mapea los contenidos de la memoria compartida para que esten en formato de char*
     char *contenido_bloque_memoria = shmat(bloque, NULL, 0);
     //      Base+offset, string a insertar, tamano del string a insertar
-    strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida
+    
+    //strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida 
+    //printf("%i\n", contenido_bloque_memoria);
+    const char* data2 = "hello world";
+    memmove(contenido_bloque_memoria, data2, strlen(data2)+1);
+    printf("%s\n", contenido_bloque_memoria);
 
     shmdt(contenido_bloque_memoria);
 
