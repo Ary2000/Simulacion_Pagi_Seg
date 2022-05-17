@@ -2,33 +2,59 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 
 typedef struct{
-   int cantElementos, tiempoEjecucion;
-   int info[];
+    int id, cantElementos, tiempoEjecucion;
+    int espacioElementos[1];
+    int registroBase[1];
 
 }proceso;
 
-bool paginas = true;
+bool paginacion = true;
 
-proceso crearProceso(){
-    proceso dato = malloc(sizeof(proceso));
-    /*int elementos;
+proceso* crearProceso(){
+    int elementos;
     if(paginacion){
-        elementos = rand() % (10) + 1;
-        int espacios[] = {1};
-        dato->cantElementos = elementos;
-        dato->info = espacios
+        elementos  = rand() % (9) + 1;
     }else{
-        elementos = rand() % (5) + 1;
-        int espacios[elementos];
-        for (int i = 0; i < elementos; i++)
-        {
-            espacios[i] = rand() % (3) + 1;
-        }
-        dato->cantElementos = elementos;
-        dato->info = espacios
+        elementos  = rand() % (4) + 1;
     }
-    dato->tiempoEjecucion = rand() % (20) + 1;*/
+    proceso* dato = malloc(sizeof(dato + elementos * sizeof dato->espacioElementos 
+        + elementos * sizeof dato->registroBase));
+    memset(dato->espacioElementos,0,elementos * sizeof dato->espacioElementos);
+    memset(dato->registroBase,-1,elementos * sizeof dato->registroBase);
+    for (int i = 0; i < elementos; i++)
+    {
+        if(paginacion){
+            dato->espacioElementos[i] = 1;
+        }else{
+            dato->espacioElementos[i] = rand() % (2) + 1;
+        }
+    }
+    dato->id = 0;
+    dato->cantElementos = elementos;
+    dato->tiempoEjecucion = rand() % (40) + 20;
     return dato;
+}
+
+int main(){
+    proceso* p = crearProceso();
+    printf("Id: %i\n", p->id);
+    printf("Paginas: %i\n", p->cantElementos);
+    printf("Tiempo: %i\n", p->tiempoEjecucion);
+    printf("Espacios: ");
+    for (int i = 0; i < p->cantElementos; i++)
+    {
+        printf(", %i", p->espacioElementos[i]);
+    }
+    printf("\n");
+    printf("Registro: ");
+    for (int i = 0; i < p->cantElementos; i++)
+    {
+        printf(", %i", p->registroBase[i]);
+    }
+    printf("\n");
+    free(p);
+    return 0;
 }
