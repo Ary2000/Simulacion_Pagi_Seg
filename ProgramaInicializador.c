@@ -11,6 +11,7 @@
 
 #define IPC_RESULT_ERROR (-1)
 
+#define CEROS ("0000000000000000000000000000")
 #define UNOS ("111111111111111111111111111111")
 #define DOS ("22222222222222222222222222222")
 
@@ -18,7 +19,7 @@ int tamanoMemoria = 0;
 
 // Buscar referencia 
 int isNumber(char s[]) {
-    for(int i = 0; s[i] != '\0'; i++){
+    for(int i = 0; s[i] != '\0'; i++){ 
         if (isdigit(s[i]) == 0)
             return 0;
     }
@@ -99,6 +100,13 @@ bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos
     return hayEspacio;
 }
 
+bool eliminarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* registrosBase, int* tamProcesos, int cantidadProcesos) {
+    for(int i = 0; i < cantidadProcesos; i++) {
+        strncpy(memoriaCompartida + registrosBase[i], CEROS, tamProcesos[i]);
+    }
+    return true;
+}
+
 int main(){
     //int tamanoMemoria = pedirTamanoMemoria();
     tamanoMemoria = 10;
@@ -117,6 +125,7 @@ int main(){
     int procesos[] = {2, 1};
     int registrosBase[] = {0, 0};
     bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int), registrosBase);
+    eliminarEnLaMemoria(contenido_bloque_memoria, tamanoMemoria, registrosBase, procesos, sizeof(registrosBase)/sizeof(int));
 
     shmdt(contenido_bloque_memoria);
 
