@@ -8,11 +8,13 @@
 
 
 pthread_mutex_t mutex;
+enum estados{Espera, Ejecutado, Buscando, EnMemoria, Muerto};
 
 typedef struct{
     int id, cantElementos, tiempoEjecucion;
     int espacioElementos[1];
     int registroBase[1];
+    enum estados estado;
 
 }proceso;
 
@@ -46,6 +48,7 @@ proceso* crearProceso(){
     dato->id = 0;
     dato->cantElementos = elementos;
     dato->tiempoEjecucion = rand() % (40) + 20;
+    dato->estado = Espera;
     return dato;
 }
 

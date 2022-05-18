@@ -10,6 +10,12 @@ typedef struct{
 ejecucion* inicio = NULL;
 ejecucion* fin = NULL;
 
+ejecucion* iniMuertos = NULL;
+ejecucion* finMuertos = NULL;
+
+ejecucion* iniFinalizados = NULL;
+ejecucion* finFinalizados = NULL;
+
 void insertar(proceso* p){
     ejecucion* dato = malloc(sizeof(ejecucion));
     dato->idProcess = p->id;
@@ -44,6 +50,7 @@ void eliminar(proceso* p){
     while(aEliminar != NULL){
         if(aEliminar->idProcess == p->id){
             aux->siguiente = aEliminar->siguiente;
+            aEliminar->siguiente = NULL;
             free(aEliminar);
             return;
         }
@@ -82,4 +89,95 @@ proceso* getProceso(int pos){
         return NULL;
     }
     return aux->process;
+}
+
+void starvation(proceso* p){
+    ejecucion* dato = malloc(sizeof(ejecucion));
+    dato->idProcess = p->id;
+    dato->process = p;
+    dato->siguiente = NULL;
+    if(iniMuertos == NULL){
+        iniMuertos = dato;
+        finMuertos = dato;
+    }else{
+      finMuertos->siguiente = dato;
+      finMuertos = dato;
+    }
+}
+
+int lenStarvation(){
+    int cont = 0;
+    ejecucion* i = iniMuertos;
+    while(i != NULL){
+        cont++;
+        i = i->siguiente;
+    }
+    return cont;
+}
+
+void finalizo(proceso* p){
+    ejecucion* dato = malloc(sizeof(ejecucion));
+    dato->idProcess = p->id;
+    dato->process = p;
+    dato->siguiente = NULL;
+    if(iniFinalizados == NULL){
+        iniFinalizados = dato;
+        finFinalizados = dato;
+    }else{
+      finFinalizados->siguiente = dato;
+      finFinalizados = dato;
+    }
+}
+
+int lenFinalizo(){
+    int cont = 0;
+    ejecucion* i = iniFinalizados;
+    while(i != NULL){
+        cont++;
+        i = i->siguiente;
+    }
+    return cont;
+}
+
+void liberarMemoria(){
+    ejecucion* aux;
+    if(inicio != NULL){
+        aux = inicio;
+        while (inicio != fin)
+        {
+            inicio = inicio->siguiente;
+            aux->siguiente = NULL;
+            free(aux);
+            aux = inicio;
+        }
+        inicio = NULL;
+        fin = NULL;
+        free(aux);
+    }
+    if(iniMuertos != NULL){
+        aux = iniMuertos;
+        while (iniMuertos != finMuertos)
+        {
+            iniMuertos = iniMuertos->siguiente;
+            aux->siguiente = NULL;
+            free(aux);
+            aux = iniMuertos;
+        }
+        iniMuertos = NULL;
+        finMuertos = NULL;
+        free(aux);
+    }
+    if(iniFinalizados != NULL){
+        aux = iniFinalizados;
+        while (iniFinalizados != finFinalizados)
+        {
+            iniFinalizados = iniFinalizados->siguiente;
+            aux->siguiente = NULL;
+            free(aux);
+            aux = iniFinalizados;
+        }
+        iniFinalizados = NULL;
+        finFinalizados = NULL;
+        free(aux);
+    }
 }
