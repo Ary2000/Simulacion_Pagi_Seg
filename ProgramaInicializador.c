@@ -14,6 +14,9 @@
 #define UNOS ("111111111111111111111111111111")
 #define DOS ("22222222222222222222222222222")
 
+int tamanoMemoria = 0;
+
+// Buscar referencia 
 int isNumber(char s[]) {
     for(int i = 0; s[i] != '\0'; i++){
         if (isdigit(s[i]) == 0)
@@ -58,7 +61,7 @@ int pedirTamanoMemoria() {
 //                      memoriaCompartida: Puntero a la memoria compartida
 //                      tamMemoria: La cantidad de bytes de la memoria compartida
 //                      tamProcesos: Tamano de todos los procesos
-bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos, int cantidadProcesos) {
+bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos, int cantidadProcesos, int* registrosBases) {
     int contadorEspaciosLibres = 0;
     int indiceElemento = 0;
     bool hayEspacio = false;
@@ -67,6 +70,7 @@ bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos
             contadorEspaciosLibres++;
             if(contadorEspaciosLibres == tamProcesos[indiceElemento]) {
                 strncpy(memoriaCompartida + contadorMemCompartida - (tamProcesos[indiceElemento] - 1), DOS, tamProcesos[indiceElemento]); // Copia el string en la memoria compartida
+                registrosBases[indiceElemento] = contadorMemCompartida - (tamProcesos[indiceElemento] - 1);
                 indiceElemento++;
                 if(indiceElemento == cantidadProcesos){
                     hayEspacio = true;
@@ -81,39 +85,23 @@ bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos
             contadorEspaciosLibres = 0;
         }
     }
+    
+    char charRemplazo = '0';
+    if(hayEspacio == true)
+        charRemplazo = '1';
+    else
+        registrosBases[0] = -1;
+
     for(int contadorMemCompartida = 0; contadorMemCompartida < tamMemoria; contadorMemCompartida++) {
         if(memoriaCompartida[contadorMemCompartida] == '2')
-            memoriaCompartida[contadorMemCompartida] = '0';
+            memoriaCompartida[contadorMemCompartida] = charRemplazo;
     }
     return hayEspacio;
 }
 
-bool insertarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos, int cantidadProcesos) {
-    int contadorEspaciosLibres = 0;
-    int indiceElemento = 0;
-    for(int contadorMemCompartida = 0; contadorMemCompartida < tamMemoria; contadorMemCompartida++) {
-        if(memoriaCompartida[contadorMemCompartida] == '0') {
-            contadorEspaciosLibres++;
-            if(contadorEspaciosLibres == tamProcesos[indiceElemento]) {
-                strncpy(memoriaCompartida + contadorMemCompartida - (tamProcesos[indiceElemento] - 1), UNOS, tamProcesos[indiceElemento]); // Copia el string en la memoria compartida
-                indiceElemento++;
-                if(indiceElemento == cantidadProcesos)
-                    return true;
-
-                contadorEspaciosLibres = 0;
-                contadorMemCompartida = -1;
-            }
-        }
-        else{
-            contadorEspaciosLibres = 0;
-        }
-    }
-    return false;
-}
-
 int main(){
     //int tamanoMemoria = pedirTamanoMemoria();
-    int tamanoMemoria = 10;
+    tamanoMemoria = 10;
 
     // Pide el bloque de memoria compartida
     //int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
@@ -125,12 +113,10 @@ int main(){
     //      Base+offset, string a insertar, tamano del string a insertar
     //strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida
 
-    char contenido_bloque_memoria[] = {'0', '1', '1', '1', '0'};
+    char contenido_bloque_memoria[] = {'0', '1', '1', '0', '0'};
     int procesos[] = {2, 1};
-    bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int));
-    if(hayEspacio == true);{
-        insertarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int));
-    }
+    int registrosBase[] = {0, 0};
+    bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int), registrosBase);
 
     shmdt(contenido_bloque_memoria);
 
