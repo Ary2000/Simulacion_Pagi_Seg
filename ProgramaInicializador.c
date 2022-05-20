@@ -20,6 +20,7 @@
 int tamanoMemoria = 0;
 char* memoriaCompartida;
 pthread_mutex_t lockMemoria;
+int bloque = 0;
 
 // Buscar referencia 
 int isNumber(char s[]) {
@@ -123,8 +124,7 @@ int inicializar(){
     pthread_mutex_init(&lockMemoria, NULL);
 
     // Pide el bloque de memoria compartida
-    int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
-    //shmctl(bloque, IPC_RMID, NULL);
+    bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
     if(bloque == IPC_RESULT_ERROR){
         return IPC_RESULT_ERROR;
     }

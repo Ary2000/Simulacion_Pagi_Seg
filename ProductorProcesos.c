@@ -118,10 +118,10 @@ void menu(){
     while(1){
         scanf("%d",&numTeclado);
         if(numTeclado==1){
+            shmctl(bloque, IPC_RMID, NULL);
             exit(EXIT_SUCCESS);
         }
     }
-    pthread_exit(NULL);
 }
 
 /*bool buscarEspacio = true;
