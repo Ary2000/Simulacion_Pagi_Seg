@@ -7,7 +7,6 @@
 #include <stdint.h>
 #include <string.h>
 #include "ColaReady.c"
-#include <semaphore.h>
 #include <pthread.h>
 
 #include "ProgramaInicializador.c"
@@ -90,20 +89,12 @@ void *generarProcesos(void *myvar)
             printf(", %i", p->registroBase[i]);
         }
         printf("\n\n");
-<<<<<<< HEAD
         //pthread_t threadEntrarMemoria; 
         pthread_create(&p->hilo, NULL, buscarEspacioMemoria,(void *) p);
         //agregar(&threadEntrarMemoria);
         //free(p);
         agregar(p);
         p = p->siguiente;
-=======
-        pthread_t threadEntrarMemoria; 
-        pthread_create(&threadEntrarMemoria, NULL, buscarEnLaMemoria, p);
-        //pthread_join(threadEntrarMemoria, NULL);
-        //agregar(threadEntrarMemoria);
-        //free(p);
->>>>>>> main
         id = id +1;
         sleep(1);  //Este sleep va de 30 a 60 segundos
     }
