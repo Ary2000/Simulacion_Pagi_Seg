@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#include "ProductorProcesos.c"
+#include "VariablesGlobales.c"
 
 FILE *archivo;
 char fileName[] = "Bitacora.txt";
@@ -31,9 +31,9 @@ void getEstado(char* string, enum estados estado){
         strcpy(string, "en ejecucion");
         break;
 
-    /*case Saliendo:
+    case Saliendo:
         strcpy(string, "solicitando semaforo para salir");
-        break;*/
+        break;
     
     case Muerto:
         strcpy(string, "muerto");

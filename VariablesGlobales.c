@@ -1,6 +1,6 @@
 #include<stdio.h>
 
-enum estados{Espera, Ejecutado, Buscando, EnMemoria, Muerto};
+enum estados{Espera, Ejecutado, Buscando, EnMemoria, Saliendo, Muerto};
 
 typedef struct{
     int id, cantElementos, tiempoEjecucion;
