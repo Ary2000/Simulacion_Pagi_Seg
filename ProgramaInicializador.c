@@ -60,10 +60,10 @@ int pedirTamanoMemoria() {
         }
 }
 
-bool eliminarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* registrosBase, int* tamProcesos, int cantidadProcesos) {
+bool eliminarEnLaMemoria(proceso* procesoSalir) {
     pthread_mutex_lock(&lockMemoria);
-    for(int i = 0; i < cantidadProcesos; i++) {
-        strncpy(memoriaCompartida + registrosBase[i], CEROS, tamProcesos[i]);
+    for(int i = 0; i < procesoSalir->cantElementos; i++) {
+        strncpy(memoriaCompartida + procesoSalir->registroBase[i], CEROS, procesoSalir->espacioElementos[i]);
     }
     pthread_mutex_unlock(&lockMemoria);
     return true;

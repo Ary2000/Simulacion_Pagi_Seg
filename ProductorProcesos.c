@@ -112,7 +112,7 @@ void *generarProcesos(void *myvar)
     pthread_exit(NULL);
 }
 
-void *menu(){
+void menu(){
     printf("1.TERMINAR EJECUCION\n");
     int numTeclado;
     while(1){
