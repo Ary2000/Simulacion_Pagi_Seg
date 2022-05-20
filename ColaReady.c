@@ -6,20 +6,32 @@
 #include <string.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <pthread.h>
+
 
 
 typedef struct{
-   pthread_t proceso;
+    int id, cantElementos, tiempoEjecucion;
+    int *espacioElementos;
+    int *registroBase;
+    pthread_t hilo;
+    struct proceso* siguiente;
+
+}proceso;
+
+typedef struct{
+   //pthread_t proceso;
+   struct proceso* p;
    struct nodo* siguiente;
 }nodo;
 
 nodo* primero = NULL;
 nodo* ultimo = NULL;
 
-void agregar(pthread_t proceso){
+void agregar(proceso* p){
    nodo* dato = malloc(sizeof(nodo)); //Inicializa el nodo
    dato->siguiente = NULL;
-   dato->proceso = proceso;
+   dato->p = p;
 
    if(primero == NULL){
       primero = dato;
