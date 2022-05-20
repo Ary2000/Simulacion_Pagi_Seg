@@ -14,13 +14,13 @@ typedef struct{
     int id, cantElementos, tiempoEjecucion;
     int *espacioElementos;
     int *registroBase;
+    int estado;  //0 = nuevo, 1 = bloqueado, 2 = buscando, 3 = en_memoria, 4 = saliendo, 5 = muerto
     pthread_t hilo;
     struct proceso* siguiente;
 
 }proceso;
 
 typedef struct{
-   //pthread_t proceso;
    struct proceso* p;
    struct nodo* siguiente;
 }nodo;

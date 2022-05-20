@@ -6,17 +6,10 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#include "ColaReady.c"
 #include <pthread.h>
-
 #include "ProgramaInicializador.c"
 
-
-pthread_mutex_t mutex;
-
-
-
-bool paginacion = false;
+bool paginacion = true;
 int estadoHilo = 1;
 
 
@@ -45,29 +38,9 @@ proceso* crearProceso(){
     dato->id = 0;
     dato->cantElementos = elementos;
     dato->tiempoEjecucion = rand() % (40) + 20;
-    //dato->estado = Espera;
     return dato;
 }
 
-void *buscarEspacioMemoria(void *arg){
-    proceso *p;
-    p = (proceso *) arg;
-    pthread_mutex_lock(&mutex);
-    for (int i = 0; i < 5; ++i)
-    {
-        printf("Soy el proceso: %d y estoy buscando espacio en memoria \n", p->id);
-        sleep(1);
-    }
-    pthread_mutex_unlock(&mutex);
-    //free(p);
-    pthread_exit(NULL);
-    //semaforo();
-    //muevo proceso al bloque de memoria
-    //memoria()
-    //  memmove(contenido_bloque_memoria, proceso, strlen(data2)+1);
-    //  sleep(proceso->tiempo)
-    //printf("%s\n","mueve el proceso");
-}
 void *generarProcesos(void *myvar)
 {
     int id = 0;
@@ -90,13 +63,13 @@ void *generarProcesos(void *myvar)
         }
         printf("\n\n");
         //pthread_t threadEntrarMemoria; 
-        pthread_create(&p->hilo, NULL, buscarEspacioMemoria,(void *) p);
+        pthread_create(&p->hilo, NULL, buscarEnLaMemoria,p);
         //agregar(&threadEntrarMemoria);
         //free(p);
         agregar(p);
         p = p->siguiente;
         id = id +1;
-        sleep(1);  //Este sleep va de 30 a 60 segundos
+        sleep(10);  //Este sleep va de 30 a 60 segundos
     }
     /*for (int i = 0; i < largoLista(); ++i)
     {
@@ -116,62 +89,5 @@ void menu(){
         }
     }
 }
-
-/*bool buscarEspacio = true;
-
-void semaforo(){
-    //pthread_mutex_t mutex
-    //funcion hilo -> pthread_mutex_lock , sentencia, pthread_mutex_unlock
-    //pthread_mutex_init(&mutex,NULL); 
-    if(buscarEspacio==false){
-        wait();
-    }
-    else{
-        buscarEspacio = false;
-        printf("%s\n", "Buscando espacio...");
-        buscarEspacio = true;
-    }
-
-}*/
-
-
-
-// int main(){
-//     pthread_mutex_init(&mutex,NULL);
-//     pthread_t threadGenerarProcesos, threadMenu;
-//     pthread_create(&threadGenerarProcesos, NULL, generarProcesos, NULL);
-//     pthread_create(&threadMenu, NULL, menu, NULL);
-//     pthread_join(threadGenerarProcesos,NULL);
-//     pthread_join(threadMenu, NULL);
-//     return 0;
-// }
-
-
-// int main(){
-//     //int tamanoMemoria = pedirTamanoMemoria();
-//     tamanoMemoria = 5;
-
-//     // Pide el bloque de memoria compartida
-//     //int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
-//     //if(bloque == IPC_RESULT_ERROR){
-//     //    return IPC_RESULT_ERROR;
-//     //}
-//     // Mapea los contenidos de la memoria compartida para que esten en formato de char*
-//     //char *contenido_bloque_memoria = shmat(bloque, NULL, 0);
-
-//     pthread_t threadGenerarProcesos;
-//     pthread_create(&threadGenerarProcesos, NULL, generarProcesos, NULL);
-//     pthread_join(threadGenerarProcesos,NULL);
-
-//     char contenido_bloque_memoria[] = {'0', '0', '0', '0', '0'};
-//     int procesos[] = {2, 1};
-//     int registrosBase[] = {0, 0};
-//     bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int), registrosBase);
-//     eliminarEnLaMemoria(contenido_bloque_memoria, tamanoMemoria, registrosBase, procesos, sizeof(registrosBase)/sizeof(int));
-    
-//     shmdt(contenido_bloque_memoria);
-
-//     return 0;
-// }
 
 #endif

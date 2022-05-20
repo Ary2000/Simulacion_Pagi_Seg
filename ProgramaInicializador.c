@@ -8,8 +8,8 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <stdbool.h>
+#include "listaProcesos.c"
 
-#include "VariablesGlobales.c"
 
 #define IPC_RESULT_ERROR (-1)
 
@@ -62,7 +62,11 @@ int pedirTamanoMemoria() {
 }
 
 bool eliminarEnLaMemoria(proceso* procesoSalir) {
+    procesoSalir->estado = 4;
+    printf("Proceso buscando salir de memoria%i\n", procesoSalir->id);
     pthread_mutex_lock(&lockMemoria);
+    procesoSalir->estado = 5;
+    printf("Proceso sale de memoria%i\n", procesoSalir->id);
     for(int i = 0; i < procesoSalir->cantElementos; i++) {
         strncpy(memoriaCompartida + procesoSalir->registroBase[i], CEROS, procesoSalir->espacioElementos[i]);
     }
@@ -77,8 +81,12 @@ bool eliminarEnLaMemoria(proceso* procesoSalir) {
 //                      tamMemoria: La cantidad de bytes de la memoria compartida
 //                      tamProcesos: Tamano de todos los procesos
 void *buscarEnLaMemoria(void *args) {
-    pthread_mutex_lock(&lockMemoria);
     proceso *procesoEnBusqueda = args;
+    procesoEnBusqueda->estado = 1;
+    printf("BLOQUEADO ESPERANDO BUSCAR EN MEMORIA: %i\n",procesoEnBusqueda->id);
+    pthread_mutex_lock(&lockMemoria);
+    procesoEnBusqueda->estado = 2;
+    printf("ESTA BUSCANDO EN MEMORIA: %i\n",procesoEnBusqueda->id);
     int contadorEspaciosLibres = 0;
     int indiceElemento = 0;
     bool hayEspacio = false;
@@ -107,16 +115,24 @@ void *buscarEnLaMemoria(void *args) {
     if(hayEspacio == true)
     // El proceso fue asignado
         charRemplazo = '1';
-    else
+    //EN ESTE ELSE SE DEBE MATAR EL PROCESO
+    else{
         procesoEnBusqueda->registroBase[0] = -1;
+        procesoEnBusqueda->estado = 5;
+        printf("Proceso sale de memoria%i\n",procesoEnBusqueda->id);
+        pthread_exit(NULL); 
+    }
 
     for(int contadorMemCompartida = 0; contadorMemCompartida < tamanoMemoria; contadorMemCompartida++) {
         if(memoriaCompartida[contadorMemCompartida] == '2')
             memoriaCompartida[contadorMemCompartida] = charRemplazo;
     }
     pthread_mutex_unlock(&lockMemoria);
-    sleep(procesoEnBusqueda->tiempoEjecucion);
-    //eliminarEnLaMemoria();
+    procesoEnBusqueda->estado = 3;
+    printf("Proceso en memoria%i\n",procesoEnBusqueda->id);
+    sleep(procesoEnBusqueda->tiempoEjecucion-15);
+    eliminarEnLaMemoria(procesoEnBusqueda);
+    pthread_exit(NULL);
 }
 
 int inicializar(){
