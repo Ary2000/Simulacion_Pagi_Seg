@@ -9,10 +9,22 @@
 #include <sys/shm.h>
 #include <stdbool.h>
 
+#include "VariablesGlobales.c"
+
 #define IPC_RESULT_ERROR (-1)
 
+#define CEROS ("\000\000\000\000\000\000\000\000\000\000")
+#define UNOS ("111111111111111111111111111111")
+#define DOS ("22222222222222222222222222222")
+
+int tamanoMemoria = 0;
+char* memoriaCompartida;
+pthread_mutex_t lockMemoria;
+int bloque = 0;
+
+// Buscar referencia 
 int isNumber(char s[]) {
-    for(int i = 0; s[i] != '\0'; i++){
+    for(int i = 0; s[i] != '\0'; i++){ 
         if (isdigit(s[i]) == 0)
             return 0;
     }
@@ -49,26 +61,78 @@ int pedirTamanoMemoria() {
         }
 }
 
-int main(){
-    int tamanoMemoria = pedirTamanoMemoria();
+bool eliminarEnLaMemoria(proceso* procesoSalir) {
+    pthread_mutex_lock(&lockMemoria);
+    for(int i = 0; i < procesoSalir->cantElementos; i++) {
+        strncpy(memoriaCompartida + procesoSalir->registroBase[i], CEROS, procesoSalir->espacioElementos[i]);
+    }
+    pthread_mutex_unlock(&lockMemoria);
+    return true;
+}
+
+// Este programa revisa que haya suficiente espacio para insertar un peso del tamano
+// presente en la variable cantidadNecesaria
+// Los argumentos son:
+//                      memoriaCompartida: Puntero a la memoria compartida
+//                      tamMemoria: La cantidad de bytes de la memoria compartida
+//                      tamProcesos: Tamano de todos los procesos
+void *buscarEnLaMemoria(void *args) {
+    pthread_mutex_lock(&lockMemoria);
+    proceso *procesoEnBusqueda = args;
+    int contadorEspaciosLibres = 0;
+    int indiceElemento = 0;
+    bool hayEspacio = false;
+    for(int contadorMemCompartida = 0; contadorMemCompartida < tamanoMemoria; contadorMemCompartida++) {
+        if(memoriaCompartida[contadorMemCompartida] == 0) {
+            contadorEspaciosLibres++;
+            if(contadorEspaciosLibres == procesoEnBusqueda->espacioElementos[indiceElemento]) {
+                strncpy(memoriaCompartida + contadorMemCompartida - (procesoEnBusqueda->espacioElementos[indiceElemento] - 1), DOS, procesoEnBusqueda->espacioElementos[indiceElemento]); // Copia el string en la memoria compartida
+                procesoEnBusqueda->registroBase[indiceElemento] = contadorMemCompartida - (procesoEnBusqueda->espacioElementos[indiceElemento] - 1);
+                indiceElemento++;
+                if(indiceElemento == procesoEnBusqueda->cantElementos){
+                    hayEspacio = true;
+                    break;
+                }
+
+                contadorEspaciosLibres = 0;
+                contadorMemCompartida = -1;
+            }
+        }
+        else{
+            contadorEspaciosLibres = 0;
+        }
+    }
+    
+    char charRemplazo = 0;
+    if(hayEspacio == true)
+    // El proceso fue asignado
+        charRemplazo = '1';
+    else
+        procesoEnBusqueda->registroBase[0] = -1;
+
+    for(int contadorMemCompartida = 0; contadorMemCompartida < tamanoMemoria; contadorMemCompartida++) {
+        if(memoriaCompartida[contadorMemCompartida] == '2')
+            memoriaCompartida[contadorMemCompartida] = charRemplazo;
+    }
+    pthread_mutex_unlock(&lockMemoria);
+    sleep(procesoEnBusqueda->tiempoEjecucion);
+    //eliminarEnLaMemoria();
+}
+
+int inicializar(){
+    tamanoMemoria = pedirTamanoMemoria();
+    pthread_mutex_init(&lockMemoria, NULL);
 
     // Pide el bloque de memoria compartida
-    int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
+    bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
     if(bloque == IPC_RESULT_ERROR){
-        printf("%s\n", "ERROR");
         return IPC_RESULT_ERROR;
     }
     // Mapea los contenidos de la memoria compartida para que esten en formato de char*
-    char *contenido_bloque_memoria = shmat(bloque, NULL, 0);
+    memoriaCompartida = shmat(bloque, NULL, 0);
     //      Base+offset, string a insertar, tamano del string a insertar
-    
-    //strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida 
-    //printf("%i\n", contenido_bloque_memoria);
-    const char* data2 = "hello world";
-    memmove(contenido_bloque_memoria, data2, strlen(data2)+1);
-    printf("%s\n", contenido_bloque_memoria);
-
-    shmdt(contenido_bloque_memoria);
+    //strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida
+    //shmdt(contenido_bloque_memoria);
 
     return 0;
 }

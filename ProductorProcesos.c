@@ -1,3 +1,6 @@
+#ifndef PROGRAMAPROCESOS_C
+#define PROGRAMAPROCESOS_C
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -5,6 +8,9 @@
 #include <string.h>
 #include "ColaReady.c"
 #include <semaphore.h>
+#include <pthread.h>
+
+#include "ProgramaInicializador.c"
 
 
 pthread_mutex_t mutex;
@@ -27,18 +33,8 @@ proceso* crearProceso(){
         elementos  = rand() % (4) + 1;
     }
     proceso* dato = malloc(sizeof(dato));
-    /*dato = malloc(sizeof(dato + elementos * sizeof (dato->espacioElementos) 
-        + elementos * sizeof (dato->registroBase)));*/
-    /*memset(dato->espacioElementos,0,elementos * sizeof(dato->espacioElementos));
-    memset(dato->registroBase,-1,elementos * sizeof(dato->registroBase));*/
     dato->espacioElementos = calloc(elementos,sizeof(int));
     dato->registroBase = calloc(elementos,sizeof(int));
-    for (int i = 0; i < elementos; ++i)
-    {
-        dato->espacioElementos[i]=0;
-        dato->registroBase[i]=-1;
-        
-    }
     for (int i = 0; i < elementos; i++)
     {
         if(paginacion){
@@ -50,6 +46,7 @@ proceso* crearProceso(){
     dato->id = 0;
     dato->cantElementos = elementos;
     dato->tiempoEjecucion = rand() % (40) + 20;
+    //dato->estado = Espera;
     return dato;
 }
 
@@ -93,12 +90,20 @@ void *generarProcesos(void *myvar)
             printf(", %i", p->registroBase[i]);
         }
         printf("\n\n");
+<<<<<<< HEAD
         //pthread_t threadEntrarMemoria; 
         pthread_create(&p->hilo, NULL, buscarEspacioMemoria,(void *) p);
         //agregar(&threadEntrarMemoria);
         //free(p);
         agregar(p);
         p = p->siguiente;
+=======
+        pthread_t threadEntrarMemoria; 
+        pthread_create(&threadEntrarMemoria, NULL, buscarEnLaMemoria, p);
+        //pthread_join(threadEntrarMemoria, NULL);
+        //agregar(threadEntrarMemoria);
+        //free(p);
+>>>>>>> main
         id = id +1;
         sleep(1);  //Este sleep va de 30 a 60 segundos
     }
@@ -109,16 +114,16 @@ void *generarProcesos(void *myvar)
     pthread_exit(NULL);
 }
 
-void *menu(){
+void menu(){
     printf("1.TERMINAR EJECUCION\n");
     int numTeclado;
     while(1){
         scanf("%d",&numTeclado);
         if(numTeclado==1){
+            shmctl(bloque, IPC_RMID, NULL);
             exit(EXIT_SUCCESS);
         }
     }
-    pthread_exit(NULL);
 }
 
 /*bool buscarEspacio = true;
@@ -140,15 +145,42 @@ void semaforo(){
 
 
 
+// int main(){
+//     pthread_mutex_init(&mutex,NULL);
+//     pthread_t threadGenerarProcesos, threadMenu;
+//     pthread_create(&threadGenerarProcesos, NULL, generarProcesos, NULL);
+//     pthread_create(&threadMenu, NULL, menu, NULL);
+//     pthread_join(threadGenerarProcesos,NULL);
+//     pthread_join(threadMenu, NULL);
+//     return 0;
+// }
 
 
+// int main(){
+//     //int tamanoMemoria = pedirTamanoMemoria();
+//     tamanoMemoria = 5;
 
-int main(){
-    pthread_mutex_init(&mutex,NULL);
-    pthread_t threadGenerarProcesos, threadMenu;
-    pthread_create(&threadGenerarProcesos, NULL, generarProcesos, NULL);
-    pthread_create(&threadMenu, NULL, menu, NULL);
-    pthread_join(threadGenerarProcesos,NULL);
-    pthread_join(threadMenu, NULL);
-    return 0;
-}
+//     // Pide el bloque de memoria compartida
+//     //int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
+//     //if(bloque == IPC_RESULT_ERROR){
+//     //    return IPC_RESULT_ERROR;
+//     //}
+//     // Mapea los contenidos de la memoria compartida para que esten en formato de char*
+//     //char *contenido_bloque_memoria = shmat(bloque, NULL, 0);
+
+//     pthread_t threadGenerarProcesos;
+//     pthread_create(&threadGenerarProcesos, NULL, generarProcesos, NULL);
+//     pthread_join(threadGenerarProcesos,NULL);
+
+//     char contenido_bloque_memoria[] = {'0', '0', '0', '0', '0'};
+//     int procesos[] = {2, 1};
+//     int registrosBase[] = {0, 0};
+//     bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int), registrosBase);
+//     eliminarEnLaMemoria(contenido_bloque_memoria, tamanoMemoria, registrosBase, procesos, sizeof(registrosBase)/sizeof(int));
+    
+//     shmdt(contenido_bloque_memoria);
+
+//     return 0;
+// }
+
+#endif
