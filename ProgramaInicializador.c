@@ -9,13 +9,17 @@
 #include <sys/shm.h>
 #include <stdbool.h>
 
+#include "VariablesGlobales.c"
+
 #define IPC_RESULT_ERROR (-1)
 
-#define CEROS ("0000000000000000000000000000")
+#define CEROS ("\000\000\000\000\000\000\000\000\000\000")
 #define UNOS ("111111111111111111111111111111")
 #define DOS ("22222222222222222222222222222")
 
 int tamanoMemoria = 0;
+char* memoriaCompartida;
+pthread_mutex_t lockMemoria;
 
 // Buscar referencia 
 int isNumber(char s[]) {
@@ -56,24 +60,35 @@ int pedirTamanoMemoria() {
         }
 }
 
+bool eliminarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* registrosBase, int* tamProcesos, int cantidadProcesos) {
+    pthread_mutex_lock(&lockMemoria);
+    for(int i = 0; i < cantidadProcesos; i++) {
+        strncpy(memoriaCompartida + registrosBase[i], CEROS, tamProcesos[i]);
+    }
+    pthread_mutex_unlock(&lockMemoria);
+    return true;
+}
+
 // Este programa revisa que haya suficiente espacio para insertar un peso del tamano
 // presente en la variable cantidadNecesaria
 // Los argumentos son:
 //                      memoriaCompartida: Puntero a la memoria compartida
 //                      tamMemoria: La cantidad de bytes de la memoria compartida
 //                      tamProcesos: Tamano de todos los procesos
-bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos, int cantidadProcesos, int* registrosBases) {
+void *buscarEnLaMemoria(void *args) {
+    pthread_mutex_lock(&lockMemoria);
+    proceso *procesoEnBusqueda = args;
     int contadorEspaciosLibres = 0;
     int indiceElemento = 0;
     bool hayEspacio = false;
-    for(int contadorMemCompartida = 0; contadorMemCompartida < tamMemoria; contadorMemCompartida++) {
-        if(memoriaCompartida[contadorMemCompartida] == '0') {
+    for(int contadorMemCompartida = 0; contadorMemCompartida < tamanoMemoria; contadorMemCompartida++) {
+        if(memoriaCompartida[contadorMemCompartida] == 0) {
             contadorEspaciosLibres++;
-            if(contadorEspaciosLibres == tamProcesos[indiceElemento]) {
-                strncpy(memoriaCompartida + contadorMemCompartida - (tamProcesos[indiceElemento] - 1), DOS, tamProcesos[indiceElemento]); // Copia el string en la memoria compartida
-                registrosBases[indiceElemento] = contadorMemCompartida - (tamProcesos[indiceElemento] - 1);
+            if(contadorEspaciosLibres == procesoEnBusqueda->espacioElementos[indiceElemento]) {
+                strncpy(memoriaCompartida + contadorMemCompartida - (procesoEnBusqueda->espacioElementos[indiceElemento] - 1), DOS, procesoEnBusqueda->espacioElementos[indiceElemento]); // Copia el string en la memoria compartida
+                procesoEnBusqueda->registroBase[indiceElemento] = contadorMemCompartida - (procesoEnBusqueda->espacioElementos[indiceElemento] - 1);
                 indiceElemento++;
-                if(indiceElemento == cantidadProcesos){
+                if(indiceElemento == procesoEnBusqueda->cantElementos){
                     hayEspacio = true;
                     break;
                 }
@@ -87,47 +102,37 @@ bool buscarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* tamProcesos
         }
     }
     
-    char charRemplazo = '0';
+    char charRemplazo = 0;
     if(hayEspacio == true)
+    // El proceso fue asignado
         charRemplazo = '1';
     else
-        registrosBases[0] = -1;
+        procesoEnBusqueda->registroBase[0] = -1;
 
-    for(int contadorMemCompartida = 0; contadorMemCompartida < tamMemoria; contadorMemCompartida++) {
+    for(int contadorMemCompartida = 0; contadorMemCompartida < tamanoMemoria; contadorMemCompartida++) {
         if(memoriaCompartida[contadorMemCompartida] == '2')
             memoriaCompartida[contadorMemCompartida] = charRemplazo;
     }
-    return hayEspacio;
+    pthread_mutex_unlock(&lockMemoria);
+    sleep(procesoEnBusqueda->tiempoEjecucion);
+    //eliminarEnLaMemoria();
 }
 
-bool eliminarEnLaMemoria(char* memoriaCompartida, int tamMemoria, int* registrosBase, int* tamProcesos, int cantidadProcesos) {
-    for(int i = 0; i < cantidadProcesos; i++) {
-        strncpy(memoriaCompartida + registrosBase[i], CEROS, tamProcesos[i]);
-    }
-    return true;
-}
-
-int main(){
-    //int tamanoMemoria = pedirTamanoMemoria();
-    tamanoMemoria = 10;
+int inicializar(){
+    tamanoMemoria = pedirTamanoMemoria();
+    pthread_mutex_init(&lockMemoria, NULL);
 
     // Pide el bloque de memoria compartida
-    //int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
-    //if(bloque == IPC_RESULT_ERROR){
-    //    return IPC_RESULT_ERROR;
-    //}
+    int bloque = obtener_memoria_compartida("ProgramaInicializador.c", tamanoMemoria); 
+    //shmctl(bloque, IPC_RMID, NULL);
+    if(bloque == IPC_RESULT_ERROR){
+        return IPC_RESULT_ERROR;
+    }
     // Mapea los contenidos de la memoria compartida para que esten en formato de char*
-    //char *contenido_bloque_memoria = shmat(bloque, NULL, 0);
+    memoriaCompartida = shmat(bloque, NULL, 0);
     //      Base+offset, string a insertar, tamano del string a insertar
     //strncpy(contenido_bloque_memoria + 1, "ol", 2); // Copia el string en la memoria compartida
-
-    char contenido_bloque_memoria[] = {'0', '1', '1', '0', '0'};
-    int procesos[] = {2, 1};
-    int registrosBase[] = {0, 0};
-    bool hayEspacio = buscarEnLaMemoria(contenido_bloque_memoria, sizeof(contenido_bloque_memoria) / sizeof(char), procesos, sizeof(procesos) / sizeof(int), registrosBase);
-    eliminarEnLaMemoria(contenido_bloque_memoria, tamanoMemoria, registrosBase, procesos, sizeof(registrosBase)/sizeof(int));
-
-    shmdt(contenido_bloque_memoria);
+    //shmdt(contenido_bloque_memoria);
 
     return 0;
 }
