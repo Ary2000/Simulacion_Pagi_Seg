@@ -62,10 +62,10 @@ int pedirTamanoMemoria() {
 }
 
 bool eliminarEnLaMemoria(proceso* procesoSalir) {
-    procesoSalir->estado = 4;
+    //procesoSalir->estado = 4;
     printf("Proceso buscando salir de memoria%i\n", procesoSalir->id);
     pthread_mutex_lock(&lockMemoria);
-    procesoSalir->estado = 5;
+    //procesoSalir->estado = 5;
     printf("Proceso sale de memoria%i\n", procesoSalir->id);
     for(int i = 0; i < procesoSalir->cantElementos; i++) {
         strncpy(memoriaCompartida + procesoSalir->registroBase[i], CEROS, procesoSalir->espacioElementos[i]);
@@ -82,10 +82,10 @@ bool eliminarEnLaMemoria(proceso* procesoSalir) {
 //                      tamProcesos: Tamano de todos los procesos
 void *buscarEnLaMemoria(void *args) {
     proceso *procesoEnBusqueda = args;
-    procesoEnBusqueda->estado = 1;
+    //procesoEnBusqueda->estado = 1;
     printf("BLOQUEADO ESPERANDO BUSCAR EN MEMORIA: %i\n",procesoEnBusqueda->id);
     pthread_mutex_lock(&lockMemoria);
-    procesoEnBusqueda->estado = 2;
+    //procesoEnBusqueda->estado = 2;
     printf("ESTA BUSCANDO EN MEMORIA: %i\n",procesoEnBusqueda->id);
     int contadorEspaciosLibres = 0;
     int indiceElemento = 0;
@@ -118,7 +118,7 @@ void *buscarEnLaMemoria(void *args) {
     //EN ESTE ELSE SE DEBE MATAR EL PROCESO
     else{
         procesoEnBusqueda->registroBase[0] = -1;
-        procesoEnBusqueda->estado = 5;
+        //procesoEnBusqueda->estado = 5;
         printf("Proceso sale de memoria%i\n",procesoEnBusqueda->id);
         pthread_exit(NULL); 
     }
@@ -128,7 +128,7 @@ void *buscarEnLaMemoria(void *args) {
             memoriaCompartida[contadorMemCompartida] = charRemplazo;
     }
     pthread_mutex_unlock(&lockMemoria);
-    procesoEnBusqueda->estado = 3;
+    //procesoEnBusqueda->estado = 3;
     printf("Proceso en memoria%i\n",procesoEnBusqueda->id);
     sleep(procesoEnBusqueda->tiempoEjecucion-15);
     eliminarEnLaMemoria(procesoEnBusqueda);

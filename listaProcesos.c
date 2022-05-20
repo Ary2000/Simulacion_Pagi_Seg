@@ -9,12 +9,13 @@
 #include <pthread.h>
 
 
+enum estados{Espera, Ejecutado, Buscando, EnMemoria, Saliendo, Muerto};
 
 typedef struct{
     int id, cantElementos, tiempoEjecucion;
+    enum estados estado;
     int *espacioElementos;
     int *registroBase;
-    int estado;  //0 = nuevo, 1 = bloqueado, 2 = buscando, 3 = en_memoria, 4 = saliendo, 5 = muerto
     pthread_t hilo;
     struct proceso* siguiente;
 

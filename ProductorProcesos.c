@@ -19,6 +19,7 @@ void stop(void){
 
 proceso* crearProceso(){
     int elementos;
+    enum estados e = Espera;
     if(paginacion){
         elementos  = rand() % (9) + 1;
     }else{
@@ -35,6 +36,7 @@ proceso* crearProceso(){
             dato->espacioElementos[i] = rand() % (2) + 1;
         }
     }
+    dato->estado = e;
     dato->id = 0;
     dato->cantElementos = elementos;
     dato->tiempoEjecucion = rand() % (40) + 20;
