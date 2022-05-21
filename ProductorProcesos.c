@@ -45,9 +45,9 @@ proceso* crearProceso(){
 
 void *generarProcesos(void *myvar)
 {
-    int id = 0;
+    int id = 1;
     while(1){
-        proceso* p = crearProceso();
+        proceso *p = crearProceso();
         p->id = id;
         printf("Id: %i\n", p->id);
         printf("Paginas: %i\n", p->cantElementos);
@@ -64,14 +64,14 @@ void *generarProcesos(void *myvar)
             printf(", %i", p->registroBase[i]);
         }
         printf("\n\n");
-        //pthread_t threadEntrarMemoria; 
-        pthread_create(&p->hilo, NULL, buscarEnLaMemoria,p);
+        pthread_t threadEntrarMemoria; 
+        pthread_create(&threadEntrarMemoria, NULL, buscarEnLaMemoria,p);
         //agregar(&threadEntrarMemoria);
         //free(p);
         agregar(p);
-        p = p->siguiente;
+        //p = p->siguiente;
         id = id +1;
-        sleep(10);  //Este sleep va de 30 a 60 segundos
+        sleep(1);  //Este sleep va de 30 a 60 segundos
     }
     /*for (int i = 0; i < largoLista(); ++i)
     {

@@ -16,8 +16,8 @@ typedef struct{
     enum estados estado;
     int *espacioElementos;
     int *registroBase;
-    pthread_t hilo;
-    struct proceso* siguiente;
+    //pthread_t hilo;
+    //struct proceso* siguiente;
 
 }proceso;
 
