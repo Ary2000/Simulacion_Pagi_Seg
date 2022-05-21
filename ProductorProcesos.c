@@ -87,6 +87,7 @@ void menu(){
         scanf("%d",&numTeclado);
         if(numTeclado==1){
             shmctl(bloque, IPC_RMID, NULL);
+            //cerrarBitacora();
             exit(EXIT_SUCCESS);
         }
     }

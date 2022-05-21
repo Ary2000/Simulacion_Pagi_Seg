@@ -82,6 +82,7 @@ void escribirBitacora(proceso *p){
     char entrada[150];
     char estado[50];
     char pocisionesMem[40];
+    memset(pocisionesMem, 0, sizeof(pocisionesMem));
     getEstado(estado, p->estado);
     /*if(p->estado == EnMemoria){
         getPosiciones(pocisionesMem, p);
@@ -92,7 +93,7 @@ void escribirBitacora(proceso *p){
     //printf(entrada);
 }
 
-int main(){
+/*int main(){
     /*int i = 10;
     time_t horaActual = time(NULL);
     char e[] = "buscando memoria";
@@ -121,7 +122,8 @@ int main(){
     }
     indice += snprintf(&posiciones[indice], tamanio-indice, "%d", numeros[5-1]);
     printf(posiciones);
-    printf("\n");*/
+    printf("\n");
+    //////////////////////////
     abrirBitacora();
     proceso* p = malloc(sizeof(p));
     int elementos = 3;
@@ -141,4 +143,4 @@ int main(){
     escribirBitacora(p);
     cerrarBitacora();
     return 0;
-}
+}*/

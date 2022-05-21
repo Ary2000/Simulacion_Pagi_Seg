@@ -67,6 +67,7 @@ bool eliminarEnLaMemoria(proceso* procesoSalir) {
     pthread_mutex_lock(&lockMemoria);
     // El proceso sera desasignado, escribir en bitacora
     //procesoSalir->estado = 5;
+    //escribirBitacora(procesoSalir);
     printf("Proceso sale de memoria%i\n", procesoSalir->id);
     for(int i = 0; i < procesoSalir->cantElementos; i++) {
         strncpy(memoriaCompartida + procesoSalir->registroBase[i], CEROS, procesoSalir->espacioElementos[i]);
@@ -87,6 +88,7 @@ void *buscarEnLaMemoria(void *args) {
     printf("BLOQUEADO ESPERANDO BUSCAR EN MEMORIA: %i\n",procesoEnBusqueda->id);
     pthread_mutex_lock(&lockMemoria);
     //procesoEnBusqueda->estado = 2;
+    //escribirBitacora(procesoEnBusqueda);
     printf("ESTA BUSCANDO EN MEMORIA: %i\n",procesoEnBusqueda->id);
     int contadorEspaciosLibres = 0;
     int indiceElemento = 0;
@@ -115,11 +117,13 @@ void *buscarEnLaMemoria(void *args) {
     char charRemplazo = 0;
     if(hayEspacio == true)
         // El proceso fue asignado, se anota en bitacora
+        //escribirBitacora(procesoEnBusqueda);
         charRemplazo = '1';
     else{
         // El proceso no pudo ser asignado por falta de espacio, se anota en la bitacora aqui
         procesoEnBusqueda->registroBase[0] = -1;
         //procesoEnBusqueda->estado = 5;
+        //escribirBitacora(procesoEnBusqueda);
         printf("Proceso sale de memoria%i\n",procesoEnBusqueda->id); 
     }
 
@@ -130,6 +134,7 @@ void *buscarEnLaMemoria(void *args) {
     pthread_mutex_unlock(&lockMemoria);
     if(hayEspacio){
         //procesoEnBusqueda->estado = 3;
+        //escribirBitacora(procesoEnBusqueda);
         printf("Proceso en memoria%i\n",procesoEnBusqueda->id);
         sleep(procesoEnBusqueda->tiempoEjecucion-15);
         eliminarEnLaMemoria(procesoEnBusqueda);
