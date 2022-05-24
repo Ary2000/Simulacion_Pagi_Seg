@@ -1,0 +1,90 @@
+PID: 1, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:45:54 2022
+
+PID: 1, Estado: buscando espacio,  Fecha: Mon May 23 19:45:54 2022
+
+PID: 1, Estado: en ejecucion, Direcciones en memoria: [0,1,2,3],  Fecha: Mon May 23 19:45:54 2022
+
+PID: 2, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:04 2022
+
+PID: 2, Estado: buscando espacio,  Fecha: Mon May 23 19:46:04 2022
+
+PID: 2, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:46:04 2022
+
+PID: 3, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:14 2022
+
+PID: 3, Estado: buscando espacio,  Fecha: Mon May 23 19:46:14 2022
+
+PID: 3, Estado: en ejecucion, Direcciones en memoria: [4,5,6,7,8,9],  Fecha: Mon May 23 19:46:14 2022
+
+PID: 4, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:24 2022
+
+PID: 4, Estado: buscando espacio,  Fecha: Mon May 23 19:46:24 2022
+
+PID: 4, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:46:24 2022
+
+PID: 1, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:46:27 2022
+
+PID: 5, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:34 2022
+
+PID: 5, Estado: buscando espacio,  Fecha: Mon May 23 19:46:34 2022
+
+PID: 5, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:46:34 2022
+
+PID: 6, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:44 2022
+
+PID: 6, Estado: buscando espacio,  Fecha: Mon May 23 19:46:44 2022
+
+PID: 6, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:46:44 2022
+
+PID: 3, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:46:54 2022
+
+PID: 7, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:46:54 2022
+
+PID: 7, Estado: buscando espacio,  Fecha: Mon May 23 19:46:54 2022
+
+PID: 7, Estado: en ejecucion, Direcciones en memoria: [0,1],  Fecha: Mon May 23 19:46:54 2022
+
+PID: 8, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:04 2022
+
+PID: 8, Estado: buscando espacio,  Fecha: Mon May 23 19:47:04 2022
+
+PID: 8, Estado: en ejecucion, Direcciones en memoria: [2,3,4,5,6,7,8],  Fecha: Mon May 23 19:47:04 2022
+
+PID: 9, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:14 2022
+
+PID: 9, Estado: buscando espacio,  Fecha: Mon May 23 19:47:14 2022
+
+PID: 9, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:47:14 2022
+
+PID: 10, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:24 2022
+
+PID: 10, Estado: buscando espacio,  Fecha: Mon May 23 19:47:24 2022
+
+PID: 10, Estado: en ejecucion, Direcciones en memoria: [9],  Fecha: Mon May 23 19:47:24 2022
+
+PID: 8, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:47:32 2022
+
+PID: 11, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:34 2022
+
+PID: 11, Estado: buscando espacio,  Fecha: Mon May 23 19:47:34 2022
+
+PID: 11, Estado: en ejecucion, Direcciones en memoria: [2,3,4,5,6],  Fecha: Mon May 23 19:47:34 2022
+
+PID: 7, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:47:42 2022
+
+PID: 12, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:44 2022
+
+PID: 12, Estado: buscando espacio,  Fecha: Mon May 23 19:47:44 2022
+
+PID: 12, Estado: muerto por insuficiencia de espacio,  Fecha: Mon May 23 19:47:44 2022
+
+PID: 13, Estado: esperando semaforo para entrar,  Fecha: Mon May 23 19:47:54 2022
+
+PID: 13, Estado: buscando espacio,  Fecha: Mon May 23 19:47:54 2022
+
+PID: 13, Estado: en ejecucion, Direcciones en memoria: [0],  Fecha: Mon May 23 19:47:54 2022
+
+PID: 10, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:47:57 2022
+
+PID: 11, Estado: ejecucion finalizada,  Fecha: Mon May 23 19:47:59 2022
+
