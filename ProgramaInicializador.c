@@ -136,14 +136,14 @@ void *buscarEnLaMemoria(void *args) {
         if(memoriaCompartida[contadorMemCompartida] == '2')
             memoriaCompartida[contadorMemCompartida] = charRemplazo;
     }
-    sleep(3);
+    //sleep(3);
     pthread_mutex_unlock(&lockMemoria);
     if(hayEspacio){
         varEstado = EnMemoria;
         procesoEnBusqueda->estado = varEstado;
         escribirBitacora(procesoEnBusqueda);
         //printf("Proceso en memoria%i\n",procesoEnBusqueda->id);
-        sleep(procesoEnBusqueda->tiempoEjecucion-15);
+        sleep(procesoEnBusqueda->tiempoEjecucion);
         eliminarEnLaMemoria(procesoEnBusqueda);
     }
 }

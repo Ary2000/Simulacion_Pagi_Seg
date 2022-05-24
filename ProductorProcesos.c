@@ -72,7 +72,7 @@ void *generarProcesos(void *myvar)
         agregar(p);
         //p = p->siguiente;
         id = id +1;
-        sleep(1);  //rand() % (30) + 30 Este sleep va de 30 a 60 segundos
+        sleep(rand() % 30 + 30);  //rand() % 30 + 30 Este sleep va de 30 a 60 segundos
     }
     pthread_exit(NULL);
 }

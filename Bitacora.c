@@ -88,7 +88,7 @@ void escribirBitacora(proceso *p){
         getPosiciones(pocisionesMem, p);
     }*/
     getPosiciones(pocisionesMem, p, p->estado);
-    sprintf(entrada, "PID: %i, Estado: %s, %s Hora: %s\n",p->id, estado, pocisionesMem, ctime(&horaActual));
+    sprintf(entrada, "PID: %i, Estado: %s, %s Fecha: %s\n",p->id, estado, pocisionesMem, ctime(&horaActual));
     fprintf(archivo, entrada);
     //printf(entrada);
 }

@@ -28,7 +28,7 @@ int main() {
     inicializar();
     int numTeclado2=0;
     while(numTeclado2<1 || numTeclado2>2){
-        printf("Cual tipo de algoritmo desea correr (1.Paginacion/2.Segmentacio)\n");
+        printf("Cual tipo de algoritmo desea correr (1.Paginacion/2.Segmentacion)\n");
         scanf("%d",&numTeclado2);
         if(numTeclado2==2){
             paginacion=false;
