@@ -13,13 +13,13 @@ bool paginacion = true;
 int estadoHilo = 1;
 
 
+
 void stop(void){
     estadoHilo = 0;
 }
 
 proceso* crearProceso(){
     int elementos;
-    enum estados e = Espera;
     if(paginacion){
         elementos  = rand() % (9) + 1;
     }else{
@@ -36,7 +36,8 @@ proceso* crearProceso(){
             dato->espacioElementos[i] = rand() % (2) + 1;
         }
     }
-    dato->estado = e;
+    varEstado = Espera;
+    dato->estado = varEstado;
     dato->id = 0;
     dato->cantElementos = elementos;
     dato->tiempoEjecucion = rand() % (40) + 20;
@@ -49,7 +50,7 @@ void *generarProcesos(void *myvar)
     while(1){
         proceso *p = crearProceso();
         p->id = id;
-        printf("Id: %i\n", p->id);
+        /*printf("Id: %i\n", p->id);
         printf("Paginas: %i\n", p->cantElementos);
         printf("Tiempo: %i\n", p->tiempoEjecucion);
         printf("Espacios: ");
@@ -63,7 +64,7 @@ void *generarProcesos(void *myvar)
         {
             printf(", %i", p->registroBase[i]);
         }
-        printf("\n\n");
+        printf("\n\n");*/
         pthread_t threadEntrarMemoria; 
         pthread_create(&threadEntrarMemoria, NULL, buscarEnLaMemoria,p);
         //agregar(&threadEntrarMemoria);
@@ -71,26 +72,9 @@ void *generarProcesos(void *myvar)
         agregar(p);
         //p = p->siguiente;
         id = id +1;
-        sleep(1);  //Este sleep va de 30 a 60 segundos
+        sleep(1);  //rand() % (30) + 30 Este sleep va de 30 a 60 segundos
     }
-    /*for (int i = 0; i < largoLista(); ++i)
-    {
-        pthread_join(getElemento(i)->proceso,NULL);
-    }*/
     pthread_exit(NULL);
-}
-
-void menu(){
-    printf("1.TERMINAR EJECUCION\n");
-    int numTeclado;
-    while(1){
-        scanf("%d",&numTeclado);
-        if(numTeclado==1){
-            shmctl(bloque, IPC_RMID, NULL);
-            //cerrarBitacora();
-            exit(EXIT_SUCCESS);
-        }
-    }
 }
 
 #endif

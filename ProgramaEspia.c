@@ -8,89 +8,86 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <stdbool.h>
-#include "ProcesosEjecucion.c"
+#include "ProductorProcesos.c"
 
-void estadoMemoria(){
-    int procesos[1];
-    memset(procesos,0,1);//array, dato a inicializar, elementos a cambiar del arreglo
-    int count = cantProcesos();
-    for (int i = 0; i < count; i++)
-    {
-        proceso* p = getProceso(i);
-        for (int j = 0; i < p->cantElementos; j++)
-        {
-            procesos[j] = p->id;
-        }
-        
-    }
-    for (int i = 0; i < 1; i++)
-    {
-        printf("[ %i ]\n", procesos[i]);
-    }
-    
-}
+
+
+int * memoriaCompartidaCopia = NULL;
+void estadoMemoria();
 
 void estadoProcesos(){
-
+    printf("-------------------------------- PROGRAMA ESPIA --------------------------------\n");
+    printf("Memoria: ");
+    for (int i = 0; i < tamanoMemoria; ++i)
+    {
+        if(memoriaCompartida[i]!='1'){
+            printf("%c",'0');
+        }
+        else{
+            printf("%c",memoriaCompartida[i]);
+        }
+    }
+    printf("\n");
+    printf("Procesos acomodados en memoria: ");
+    estadoMemoria();
+    printf("\n*** PID EN MEMORIA ***");
+    mostrarListaXEstado(EnMemoria);
+    printf("*** PID BUSCANDO ENTRAR A MEMORIA ***");
+    mostrarListaXEstado(Buscando);
+    printf("*** PID BLOQUEADOS ESPERANDO ***");
+    mostrarListaXEstado(Espera);
+    mostrarListaXEstado(Saliendo);
+    printf("*** PID MUERTO POR NO HABER ESPACIO ***");
+    mostrarListaXEstado(Muerto);
+    printf("*** PID PROCESOS QUE TERMINARON ***");
+    mostrarListaXEstado(Ejecutado);
 }
+void estadoMemoria(){
+    enum estados varE = EnMemoria;
+    //memoria de tamaño n que acepta por direccion un maximo de 4 chars
+    memoriaCompartidaCopia = calloc(tamanoMemoria,sizeof(int));
+    for (int i = 0; i < tamanoMemoria; i++)
+    {
+        memoriaCompartidaCopia[i] = 0;
+    }
+    nodo* aux2 = primero;
+    if(paginacion){
+        while(aux2!=NULL){
+            proceso* p2 = aux2->p;
+            if(p2->estado==varE){
+                for (int i = 0; i < p2->cantElementos; i++)
+                {
+                    int indice = p2->registroBase[i];
+                    memoriaCompartidaCopia[indice] = p2->id;
+                }
 
-int main(){
-    bool seleccion = true;
-    while(seleccion){
-        printf("Seleccionar cual tipo de estado quiere revisar\n1. Estado memoria\n2. Estado procesos\n3. Finalizar\n");
-        char character = getchar();
-        while ((getchar()) != '\n');
-        switch (character)
-        {
-        case '1':
-            estadoMemoria();
-            seleccion = false;
-            break;
-
-        case '2':
-            estadoProcesos();
-            seleccion = false;
-            break;
-
-        case '3':
-            seleccion = false;
-            break;
-
-        default:
-            printf("\n\n\n\n\n\n\nPor favor insertar uno de los numeros presentes\n");
-            break;
+            }
+            aux2 = aux2->siguiente;
         }
     }
-    /*srand(time(NULL));
-    pthread_t threadConexionCliente,threadTerminar;
-    pthread_create(&threadConexionCliente, NULL, hiloConexionCliente, NULL); 
-    pthread_create(&threadTerminar, NULL, hiloTerminar, NULL);
-    //Crear menu de seleccion
-    bool seleccion = true;
-    while(seleccion) {
-        printf("Seleccionar cual tipo de cliente se quiere correr\n1. Cliente manual\n2. Cliente Automatico\n");
-        char character = getchar();
-        while ((getchar()) != '\n');
-        switch (character)
-        {
-        case '1':
-            clienteManual();
-            seleccion = false;
-            break;
-
-        case '2':
-            clienteAutomatico();
-            seleccion = false;
-            break;
-
-        default:
-            printf("\n\n\n\n\n\n\nPor favor insertar uno de los numeros presentes\n");
-            break;
+    else{
+        while(aux2!=NULL){
+            proceso* p2 = aux2->p;
+            if(p2->estado==varE){
+                for (int i = 0; i < p2->cantElementos; i++)
+                {
+                    int indice = p2->registroBase[i];
+                    int max = p2->espacioElementos[i];
+                    for (int j = 0; j < max; ++j)
+                    {
+                        memoriaCompartidaCopia[indice] = p2->id;
+                        indice = indice+1;
+                    }
+                }
+            }
+            aux2 = aux2->siguiente;
         }
+
     }
-    pthread_join(threadConexionCliente,NULL); //Termina la ejecucion del hilo de cliente
-    pthread_join(threadTerminar,NULL);*/
-    return 0;
+    for (int i = 0; i < tamanoMemoria; i++)
+    {
+        printf("%d,",memoriaCompartidaCopia[i]);
+    }
 }
 
 #endif

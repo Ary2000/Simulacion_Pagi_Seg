@@ -36,7 +36,7 @@ void getEstado(char* string, enum estados estado){
         break;
     
     case Muerto:
-        strcpy(string, "muerto");
+        strcpy(string, "muerto por insuficiencia de espacio");
         break;
     default:
         strcpy(string, "esperando semaforo para entrar");

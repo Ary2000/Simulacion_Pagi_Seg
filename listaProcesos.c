@@ -80,6 +80,48 @@ nodo* getElemento(int pos){
    }
    return NULL;
 }
+void mostrarListaXEstado(enum estados e){
+   nodo* aux = primero;
+   while(aux != NULL){
+      proceso* newP = aux->p;
+      if(newP->estado == e){
+         printf("\n[Proceso: %i,", newP->id);
+         printf("Espacios: ");
+         for (int i = 0; i < newP->cantElementos; i++)
+         {
+            printf(" %i,", newP->espacioElementos[i]);
+         }
+         printf("Registro: ");
+         for (int i = 0; i < newP->cantElementos; i++)
+         {
+            printf(" %i,", newP->registroBase[i]);
+         }
+         switch(e){
+            case Espera:
+               printf("Estado: Espera]\n");
+               break;
+            case Ejecutado:
+               printf("Estado: Ejecutado]\n");
+               break;
+            case Buscando:
+               printf("Estado: Buscando]\n");
+               break;
+            case EnMemoria:
+               printf("Estado: EnMemoria]\n");
+               break;
+            case Saliendo:
+               printf("Estado: Saliendo]\n");
+               break;
+            case Muerto:
+               printf("Estado: Muerto sin espacio]\n");
+               break;
+         }
+      }
+      aux = aux->siguiente;
+   }
+   printf("\n");
+}
+
 /*void eliminar(int pos){
    if(primero == NULL){
       return;
